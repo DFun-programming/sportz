@@ -3,7 +3,6 @@ import { createMatchSchema, listMatchesQuerySchema } from "../validation/matches
 import { matches } from "../db/schema.js";
 import { db } from "../db/db.js";
 import { getMatchStatus } from "../utils/match-status.js";
-import { error } from "node:console";
 import { desc } from "drizzle-orm";
 
 
@@ -26,24 +25,18 @@ matchRouter.get('/',async (req,res)=>{
                         .limit(limit);
         res.json({data})
     } catch(e){
-        res.status(500).json({error:"Failed to list matches", details:JSON.stringify(e)})
+        res.status(500).json({error:"Failed to list matches"})
     }
 })
 matchRouter.post('/',async(req,res)=>{
     const parsed = createMatchSchema.safeParse(req.body);
     
     if(!parsed.success){
-        return res.status(400).json({error:'Invalid Playload',details:JSON.stringify(parsed.error)})
+        return res.status(400).json({error:'Invalid Payload',details:JSON.stringify(parsed.error)})
     }
 
     const {data:{startTime,endTime, homeScore, awayScore}}=parsed;
     try{
-
-        const a = {a:1,b:2,c:{abb:1}}
-        const b = {...a};
-        b.c={a:5,b:9};
-        console.log(b);
-        console.log(a);
         const [event] = await db.insert(matches).values({
             ...parsed.data,
             startTime: new Date(startTime),
@@ -55,6 +48,6 @@ matchRouter.post('/',async(req,res)=>{
 
         res.status(201).json({data:event});
     } catch(e){
-        res.status(500).json({error:"Failed to craete match",details:JSON.stringify(e)});
+        res.status(500).json({error:"Failed to create match",details:JSON.stringify(e)});
     }
 })
