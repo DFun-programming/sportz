@@ -3,6 +3,7 @@ import { matchRouter } from './routes/matches.js';
 import http from 'http'
 import { attachWebSocketServer } from './ws/server.js';
 import { securityMiddleware } from './arcjet.js';
+import { commentaryRouter } from './routes/commentry.js';
 
 const app = express();
 const PORT = Number(process.env.PORT || 8000);
@@ -13,12 +14,14 @@ const server = http.createServer(app);
 
 app.use(express.json());
 app.use(securityMiddleware());
-app.use('/matches',matchRouter)
+app.use('/matches',matchRouter);
+app.use('/matches/:id/commentry',commentaryRouter)
 app.get('/',(req,res)=>{
     return res.status(200).json({message:'Hi guys'})
 })
-const {broadcastMatchCreated} = attachWebSocketServer(server);
-app.locals.broadcastMatchCreated = broadcastMatchCreated
+const {broadcastMatchCreated, broadcastCommentry} = attachWebSocketServer(server);
+app.locals.broadcastMatchCreated = broadcastMatchCreated;
+app.locals.broadcastCommentry = broadcastCommentry
 server.listen(PORT,HOST,()=>{
     const baseUrl = HOST === '0.0.0.0'?`http://localhost:${PORT}`:`http://${HOST}:${PORT}`
     console.log(`server is running at ${baseUrl}`)

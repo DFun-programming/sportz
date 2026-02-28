@@ -34,9 +34,9 @@ export const listMatchesQuerySchema = z.object({
  * -----------------------------------------
  */
 
-// Required id as coerced positive integer
+// Required id as UUID
 export const matchIdParamSchema = z.object({
-  id: z.coerce.number().int().positive(),
+  id: z.string().uuid(),
 });
 
 /**
