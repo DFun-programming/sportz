@@ -1,6 +1,9 @@
 import { WebSocket, WebSocketServer } from "ws";
 import { wsArcjet } from "../arcjet.js";
 const matchSubscribers = new Map();
+const MAX_SUBSCRIPTIONS_PER_SOCKET = 100;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 
 function subscribe(matchId,socket){
     if(!matchSubscribers.has(matchId)){
@@ -39,9 +42,17 @@ function handleMessage(socket,data){
         message = JSON.parse(data.toString());
         
     } catch (error) {
-        sendJson(socket,{typpe:'error',message:'Invalid JSON'})
+        sendJson(socket,{type:'error',message:'Invalid JSON'})
     }
     if(message?.type === 'subscribe' && message.matchId){
+        if (!UUID_RE.test(message.matchId)) {
+            sendJson(socket, { type: 'error', message: 'Invalid matchId' });
+            return;
+        }
+        if (socket.subscriptions.size >= MAX_SUBSCRIPTIONS_PER_SOCKET) {
+            sendJson(socket, { type: 'error', message: 'Subscription limit reached' });
+            return;
+        }
         subscribe(message.matchId,socket);
         socket.subscriptions.add(message.matchId);
         sendJson(socket,{type:'subscribed',matchId:message.matchId});

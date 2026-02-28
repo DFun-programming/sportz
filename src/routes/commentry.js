@@ -68,7 +68,7 @@ commentaryRouter.post('/', async (req, res) => {
   try {
     // ── 1. Validate route params ────────────────────────────────────────────
     const paramsResult = matchIdParamSchema.safeParse(req.params);
-    console.log(paramsResult)
+  
     if (!paramsResult.success) {
       return res.status(400).json({
         status: 'error',
@@ -81,7 +81,7 @@ commentaryRouter.post('/', async (req, res) => {
 
     // ── 2. Validate request body ────────────────────────────────────────────
     const bodyResult = createCommentarySchema.safeParse(req.body);
-    console.log(bodyResult)
+  
     if (!bodyResult.success) {
       return res.status(400).json({
         status: 'error',
