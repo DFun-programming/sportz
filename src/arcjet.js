@@ -10,15 +10,15 @@ export const httpArcjet = arcjetKey?
                                 key:arcjetKey,
                                 rules:[
                                     shield({mode:arcjetMode}),
-                                    detectBot({
-                                        mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
-                                        // Block all bots except the following
-                                        allow: [
-                                            "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
-                                            "CATEGORY:MONITOR", // Uptime monitoring services
-                                            "CATEGORY:PREVIEW", // Link previews e.g. Slack, Discord
-                                        ],
-                                        }),
+                                    // detectBot({
+                                    //     mode: "LIVE", // Blocks requests. Use "DRY_RUN" to log only
+                                    // //     // Block all bots except the following
+                                    //     allow: [
+                                    //         "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
+                                    //         "CATEGORY:MONITOR", // Uptime monitoring services
+                                    //         "CATEGORY:PREVIEW", // Link previews e.g. Slack, Discord
+                                    //     ],
+                                    //     }),
                                     slidingWindow({mode:arcjetMode,interval:'2s',max:5})                      
                                 ]
                             }):null
